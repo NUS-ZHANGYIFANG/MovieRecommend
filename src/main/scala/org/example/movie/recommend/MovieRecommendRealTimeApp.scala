@@ -9,7 +9,6 @@ import org.apache.spark.sql.{DataFrame, ForeachWriter, Row, SparkSession}
 import java.util.Properties
 
 /**
- * @Author apophis
  * @File MovieRecommendRealTimeApp
  * @Time 2024/4/4 19:53
  * @Description 基于QueryRunner和HikariConfig实现的实时推荐
@@ -17,13 +16,13 @@ import java.util.Properties
 object MovieRecommendRealTimeApp {
   def main(args: Array[String]): Unit = {
     // TODO 集群运行注释掉
-    System.setProperty("hadoop.home.dir", "D:/dev/winutils/hadoop-3.2.0")
+    //System.setProperty("hadoop.home.dir", "D:/dev/winutils/hadoop-3.2.0")
     // 设置运行环境
     val sparkConf: SparkConf = new SparkConf()
     val spark: SparkSession = SparkSession.builder()
       .config(sparkConf)
       // TODO 集群运行注释掉
-      .master("local[10]")
+      //.master("local[10]")
       .appName("MovieRecommendRealTimeApp")
       .getOrCreate()
 
@@ -31,7 +30,7 @@ object MovieRecommendRealTimeApp {
 
     val kafkaSourceDf: DataFrame = spark.readStream
       .format("kafka")
-      .option("kafka.bootstrap.servers", "localhost:9092")
+      .option("kafka.bootstrap.servers", "172.30.32.3:9092")
       .option("subscribe", "test_topic")
       .option("startingOffsets", "earliest")
       .load()
@@ -39,7 +38,7 @@ object MovieRecommendRealTimeApp {
 
     // 定义一个自定义的ForeachWriter
     // HikariCP连接池配置
-    val jdbcUrl = "jdbc:mysql://localhost:3306/recommendation"
+    val jdbcUrl = "jdbc:mysql://172.30.32.3:3306/recommendation"
     val username = "root"
     val password = "123456"
     val userRecommendSql: String =
@@ -74,7 +73,7 @@ object MovieRecommendRealTimeApp {
           runner = new QueryRunner(new HikariDataSource(hikariConfig))
           true
         }
-
+      //  这段代码通过Spark Streaming从Kafka消费数据，然后根据接收到的用户ID从MySQL数据库中读取推荐结果，并将结果写入到实时推荐表中。
         override def process(value: Row): Unit = {
           // 读取推荐结果,直接写入实时推荐表中
           val user_id: String = value.getAs[String]("user_id")

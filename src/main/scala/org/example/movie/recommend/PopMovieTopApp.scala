@@ -4,7 +4,6 @@ import org.apache.spark.SparkConf
 import org.apache.spark.sql.{DataFrame, SaveMode, SparkSession}
 
 /**
- * @Author apophis
  * @File MovieRecommendApp
  * @Time 2024/4/4 19:53
  * @Description
@@ -12,13 +11,13 @@ import org.apache.spark.sql.{DataFrame, SaveMode, SparkSession}
 object PopMovieTopApp {
   def main(args: Array[String]): Unit = {
     // TODO 集群运行注释掉
-    System.setProperty("hadoop.home.dir", "D:/dev/winutils/hadoop-3.2.0")
+    //System.setProperty("hadoop.home.dir", "D:/dev/winutils/hadoop-3.2.0")
     // 设置运行环境
     val sparkConf: SparkConf = new SparkConf()
     val spark: SparkSession = SparkSession.builder()
       .config(sparkConf)
       // TODO 集群运行注释掉
-      .master("local[10]")
+     // .master("local[10]")
       .appName("PopMovieTopApp")
       .getOrCreate()
 
@@ -30,7 +29,7 @@ object PopMovieTopApp {
       .option("inferSchema", "true")
       .option("delimiter", ",")
       // TODO 集群运行 修改为hdfs目录
-      .load("output/origin/ratings.csv")
+      .load("/data/output/origin/ratings.csv")
       .createOrReplaceTempView("rating")
 
     spark.read.format("csv")
@@ -38,7 +37,7 @@ object PopMovieTopApp {
       .option("inferSchema", "true")
       .option("delimiter", ",")
       // TODO 集群运行 修改为hdfs目录
-      .load("output/origin/item_codes.csv")
+      .load("/data/output/origin/item_codes.csv")
       .createOrReplaceTempView("item")
 
     val data: DataFrame = spark.sql(
@@ -71,7 +70,7 @@ object PopMovieTopApp {
 
     data.write
       .format("jdbc")
-      .option("url", "jdbc:mysql://localhost:3306/recommendation") // 替换成您的MySQL数据库连接信息
+      .option("url", "jdbc:mysql://172.30.32.3:3306/recommendation") // 替换成您的MySQL数据库连接信息
       .option("dbtable", "t_recommend") // 替换成您要写入的表名
       .option("user", "root") // 替换成您的MySQL用户名
       .option("password", "123456") // 替换成您的MySQL密码
