@@ -70,10 +70,10 @@ object PopMovieTopApp {
 
     data.write
       .format("jdbc")
-      .option("url", "jdbc:mysql://172.30.32.3:3306/recommendation") // 替换成您的MySQL数据库连接信息
-      .option("dbtable", "t_recommend") // 替换成您要写入的表名
-      .option("user", "root") // 替换成您的MySQL用户名
-      .option("password", "123456") // 替换成您的MySQL密码
+      .option("url", "jdbc:mysql://172.30.32.3:3306/recommendation") //  MySQL数据库连接信息
+      .option("dbtable", "t_recommend") //  写入的表名
+      .option("user", "root") //  MySQL用户名
+      .option("password", "123456") //  MySQL密码
       .mode(SaveMode.Append)
       .save()
 

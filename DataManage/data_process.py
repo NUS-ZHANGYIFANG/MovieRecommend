@@ -12,15 +12,14 @@ import pandas as pd
 from csv_to_mysql import run
 
 np.set_printoptions(suppress=True)
-pd.set_option('display.float_format', lambda x: '%.3f' % x)  # 小数点后面保留3位小数，诸如此类，按需修改吧
+pd.set_option('display.float_format', lambda x: '%.3f' % x)  # 小数点后面保留3位小数
 output_path = os.path.abspath(os.path.dirname(os.path.dirname(__file__))).replace("\\", "/") + "/output/"
 origin_path = output_path.replace("//", "/") + "origin/"
 
 
 def column_to_int():
     """
-    将 user_id 和 item 类型转换成数值型
-    默认对所有数据所有数据进行转换
+    Convert user_id and item type into numerical
     :return:
     """
     df = pd.read_csv(origin_path + "douban_users.csv")
