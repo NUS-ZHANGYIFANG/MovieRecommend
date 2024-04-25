@@ -15,13 +15,11 @@ import java.util.Properties
  */
 object MovieRecommendRealTimeApp {
   def main(args: Array[String]): Unit = {
-    // TODO 集群运行注释掉
     //System.setProperty("hadoop.home.dir", "D:/dev/winutils/hadoop-3.2.0")
-    // 设置运行环境
+    // Set up the operating environment
     val sparkConf: SparkConf = new SparkConf()
     val spark: SparkSession = SparkSession.builder()
       .config(sparkConf)
-      // TODO 集群运行注释掉
       //.master("local[10]")
       .appName("MovieRecommendRealTimeApp")
       .getOrCreate()
@@ -36,8 +34,8 @@ object MovieRecommendRealTimeApp {
       .load()
       .selectExpr("cast(value AS STRING) as user_id")
 
-    // 定义一个自定义的ForeachWriter
-    // HikariCP连接池配置
+    //Define a custom ForeachWriter
+    // HikariCP connection pool configuration
     val jdbcUrl = "jdbc:mysql://172.30.32.3:3306/recommendation"
     val username = "root"
     val password = "123456"
@@ -50,7 +48,7 @@ object MovieRecommendRealTimeApp {
     val properties = new Properties()
     properties.setProperty("user", username)
     properties.setProperty("password", password)
-    //    判断用户是否是新用户
+    // Determine whether the user is a new user
     val userIndexDF: DataFrame = spark.read.jdbc(jdbcUrl, "user_codes", properties)
 
     val userDF: DataFrame = kafkaSourceDf.join(broadcast(userIndexDF), Seq("user_id"), "left_outer")
@@ -73,9 +71,10 @@ object MovieRecommendRealTimeApp {
           runner = new QueryRunner(new HikariDataSource(hikariConfig))
           true
         }
-      //  这段代码通过Spark Streaming从Kafka消费数据，然后根据接收到的用户ID从MySQL数据库中读取推荐结果，并将结果写入到实时推荐表中。
+        //Consume data from Kafka through Spark Streaming, then read the recommendation results from
+        // the MySQL database based on the received user ID, and write the results to
+        // the real-time recommendation table.
         override def process(value: Row): Unit = {
-          // 读取推荐结果,直接写入实时推荐表中
           val user_id: String = value.getAs[String]("user_id")
           val user_id_fix: String = value.getAs[String]("user_id_fix")
           println(s"接收到 user_id: ${user_id} user_id_fix: ${user_id_fix}")

@@ -12,13 +12,13 @@ import org.apache.spark.sql.{DataFrame, SaveMode, SparkSession}
  */
 object MovieRecommendApp {
   def main(args: Array[String]): Unit = {
-    // TODO 集群运行注释掉
+    // Test
     //System.setProperty("hadoop.home.dir", "D:/dev/winutils/hadoop-3.2.0")
-    // 设置运行环境
+    // Set up the operating environment
     val sparkConf: SparkConf = new SparkConf()
     val spark: SparkSession = SparkSession.builder()
       .config(sparkConf)
-      // TODO 集群运行注释掉
+      // Test
       //.master("local[10]")
       .appName("MovieRecommendApp")
       .getOrCreate()
@@ -29,7 +29,6 @@ object MovieRecommendApp {
       .option("header", "true")
       .option("inferSchema", "true")
       .option("delimiter", ",")
-      // TODO 集群运行 修改为hdfs目录
       .load("/data/output/origin/ratings.csv")
 
 
@@ -37,30 +36,28 @@ object MovieRecommendApp {
       .option("header", "true")
       .option("inferSchema", "true")
       .option("delimiter", ",")
-      // TODO 集群运行 修改为hdfs目录
       .load("/data/output/origin/user_codes.csv")
 
     val itemDF: DataFrame = spark.read.format("csv")
       .option("header", "true")
       .option("inferSchema", "true")
       .option("delimiter", ",")
-      // TODO 集群运行 修改为hdfs目录
       .load("/data/output/origin/item_codes.csv")
 
-    // 使用ALS在训练集上构建推荐模型
+    // Use ALS to build a recommendation model on the training set
     val als: ALS = new ALS()
-      // 迭代最大值
+      // Iteration maximum
       .setMaxIter(5)
-      // ALS中正则化参数，默认为1.0
+      // Regularization parameter in ALS, default is 1.0
       .setRegParam(0.01)
       .setUserCol("us_index_value")
       .setItemCol("it_index_value")
       .setRatingCol("fractional_play_count")
-    // 训练模型
+    // Training model
     val model: ALSModel = als.fit(ratings)
 
     import spark.implicits._
-    // 为每个用户生成推荐音乐
+    // Generate 3 recommended movies for each user
     val recommend: DataFrame = model.recommendForAllUsers(3)
       .withColumn("recommendation", explode($"recommendations"))
       .select(
@@ -72,10 +69,10 @@ object MovieRecommendApp {
       .join(itemDF, Seq("it_index_value"), "inner")
     recommend_with_name.select("user_id", "item", "rating").write
       .format("jdbc")
-      .option("url", "jdbc:mysql://172.30.32.3:3306/recommendation") // 替换成您的MySQL数据库连接信息
-      .option("dbtable", "t_recommend") // 替换成您要写入的表名
-      .option("user", "root") // 替换成您的MySQL用户名
-      .option("password", "123456") // 替换成您的MySQL密码
+      .option("url", "jdbc:mysql://172.30.32.3:3306/recommendation")
+      .option("dbtable", "t_recommend")
+      .option("user", "root")
+      .option("password", "123456")
       .mode(SaveMode.Append)
       .save()
   }
