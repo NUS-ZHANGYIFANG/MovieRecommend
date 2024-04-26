@@ -1,20 +1,20 @@
 # project-spark-movie-recommend-system
 
 
-## 创建 mysql 表
+## create mysql table
 
 ```shell
-# 请确保mysql已启动
+# make sure mysql is started
 systemctl restart mysqld.service
 ```
 
-进入mysql命令行
+Enter the mysql command line
 
 ```shell
 mysql -uroot -p123456
 ```
 
-执行 init.sql
+Execute init.sql
 
 ```text
 use recommendation;
@@ -22,41 +22,41 @@ SOURCE /output/init.sql;
 ```
 
 
-## 清洗数据
+## Clean data
 
-执行 数据整理/data_process.py 程序  
-**在linux中的执行命令**
+Execute the data sorting/data_process.py program  
+**Execute commands in linux**
 
 ```shell
 python3 /output/data_process.py
 ```
 
-## 集群专属 启动集群
+## Cluster exclusive start cluster
 
 ```shell
-# 启动hadoop集群
+# Start hadoop cluster
 sh /export/software/hadoop-3.2.0/sbin/start-hadoop.sh
-# 启动spark集群
+# Start spark cluster
 sh /export/software/spark-3.1.2-bin-hadoop3.2/sbin/start-all.sh
 ```
 
-## 集群专属 上传文件到 hdfs
+## Cluster-specific upload files to hdfs
 
 ```shell
-# 创建hdfs目录
+# Create hdfs directory
 hdfs dfs -mkdir -p /data/output/origin/
-# 清空hdfs目录
+# Clear hdfs directory
 hdfs dfs -rm -r /data/output/origin/*
-# 上传文件到hdfs目录
+# Upload files to hdfs directory
 hdfs dfs -put /output/origin/item_codes.csv /data/output/origin/
 hdfs dfs -put /output/origin/ratings.csv /data/output/origin/
 hdfs dfs -put /output/origin/user_codes.csv /data/output/origin/
 
 ```
 
-## 计算最流行电影
+## Calculate the most popular movies
 
-**执行命令**
+**Excuting**
 
 ```shell
 spark-submit \
@@ -70,9 +70,9 @@ spark-submit \
 /output/origin/movie-recommend-jar-with-dependencies.jar
 ```
 
-## 计算离线推荐结果
+## Calculate offline recommendation results
 
-**执行命令**
+**Excuting**
 
 ```shell
 spark-submit \
@@ -86,24 +86,25 @@ spark-submit \
 /output/origin/movie-recommend-jar-with-dependencies.jar
 ```
 
-## 启动kafka,创建topic
+## Start kafka and create topic
 
 ```shell
-# 开启kafka
+# Start kafka
 sh /export/software/kafka_2.12-2.8.2/bin/zookeeper-server-start.sh  -daemon /export/software/kafka_2.12-2.8.2/config/zookeeper.properties
 sh /export/software/kafka_2.12-2.8.2/bin/kafka-server-start.sh -daemon /export/software/kafka_2.12-2.8.2/config/server.properties
-# 创建topic
+# Create topic
 sh /export/software/kafka_2.12-2.8.2/bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic test_topic
-# 生产者
+# producer
 sh /export/software/kafka_2.12-2.8.2/bin/kafka-console-producer.sh --broker-list localhost:9092 --topic test_topic
-# 向生产者中输入 
+# input to producer 
 # wenzel
 # aaaaa
-# 前往mysql中查找推荐结果 select * from recommendation.t_recommend_realtime;
+# Go to mysql to find recommended results
+select * from recommendation.t_recommend_realtime;
 
 ```
 
-## 实时推荐
+## Real-time recommendations
 
 ```shell
 spark-submit \
@@ -117,25 +118,25 @@ spark-submit \
 /output/origin/movie-recommend-jar-with-dependencies.jar
 ```
 
-任务停止命令
+task stop command
 
 ```shell
 yarn application -kill application_1713623434486_0006
 ```
 
-## 集群专属 关闭集群
+## Cluster exclusive Close the cluster
 
 ```shell
-# 关闭spark集群
+# Shut down the spark cluster
 sh /export/software/spark-3.1.2-bin-hadoop3.2/sbin/stop-all.sh
-# 关闭hadoop集群
+# Shut down the hadoop cluster
 sh /export/software/hadoop-3.2.0/sbin/stop-hadoop.sh
 ```
 
-## 关闭kafka
+## Shut down kafka
 
 ```shell
-# 关闭kafka
+# Shut down kafka
 sh /export/software/kafka_2.12-2.8.2/bin/kafka-server-stop.sh
 sh /export/software/kafka_2.12-2.8.2/bin/zookeeper-server-stop.sh
 ```
