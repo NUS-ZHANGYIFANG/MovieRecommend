@@ -1,7 +1,7 @@
 # project-spark-movie-recommend-system
 
 
-## create mysql table
+## Create mysql table
 
 ```shell
 # make sure mysql is started
@@ -118,7 +118,7 @@ spark-submit \
 /output/origin/movie-recommend-jar-with-dependencies.jar
 ```
 
-task stop command
+Task stop command
 
 ```shell
 yarn application -kill application_1713623434486_0006
