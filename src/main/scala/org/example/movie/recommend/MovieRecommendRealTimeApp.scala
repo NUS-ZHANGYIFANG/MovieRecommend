@@ -11,7 +11,7 @@ import java.util.Properties
 /**
  * @File MovieRecommendRealTimeApp
  * @Time 2024/4/4 19:53
- * @Description 基于QueryRunner和HikariConfig实现的实时推荐
+ * @Description Real-time recommendation based on QueryRunner and HikariConfig
  */
 object MovieRecommendRealTimeApp {
   def main(args: Array[String]): Unit = {

@@ -4,7 +4,7 @@
 @Author: apophis
 @File: csv_to_mysql.py
 @Time: 2024/3/22 17:33
-@Description: 工程描述
+@Description: Project description
 """
 import os
 import pandas as pd
@@ -14,12 +14,12 @@ import traceback
 output_path = os.path.abspath(os.path.dirname(os.path.dirname(__file__))).replace("\\", "/") + "/output/"
 origin_path = output_path.replace("//", "/") + "origin/"
 
-conn = pymysql.connect(host='localhost',  # 数据库地址
-                       user='root',  # 用户名
-                       password='123456',  # 密码
-                       db='recommendation',  # 数据库名
+conn = pymysql.connect(host='localhost',  # Database address
+                       user='root',  # Username
+                       password='123456',  # Password
+                       db='recommendation',  # Database name
                        charset='utf8mb4',
-                       cursorclass=pymysql.cursors.DictCursor)  # 字符编码
+                       cursorclass=pymysql.cursors.DictCursor)  # Character Encoding
 
 
 def write_mysql(name):
@@ -30,7 +30,7 @@ def write_mysql(name):
             WHERE TABLE_SCHEMA = 'recommendation' AND TABLE_NAME = '{name}';
         """
     cursor.execute(query)
-    # 获取所有字段名
+    # Get all field names
     columns = [row['COLUMN_NAME'] for row in cursor.fetchall()]
     cursor.close()
 
@@ -64,5 +64,5 @@ def run(t_names):
 
 
 if __name__ == '__main__':
-    # 录入mysql
+    # Enter mysql
     run(['user_codes', 'item_codes'])
