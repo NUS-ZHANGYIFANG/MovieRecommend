@@ -76,7 +76,7 @@
             <artifactId>spark-mllib_${scala.version}</artifactId>
             <version>${spark.version}</version>
         </dependency>
-        <!-- spark ml 使用的jar -->
+        <!-- spark ml used jar -->
         <dependency>
             <groupId>org.jblas</groupId>
             <artifactId>jblas</artifactId>
@@ -110,7 +110,7 @@
     </dependencies>
     <build>
         <plugins>
-            <!-- scala编译插件 mixed Java/Scala projects, see https://davidb.github.io/scala-maven-plugin/example_java.html -->
+            <!-- scala edit mixed Java/Scala projects, see https://davidb.github.io/scala-maven-plugin/example_java.html -->
             <plugin>
                 <!-- see http://davidb.github.com/scala-maven-plugin -->
                 <groupId>org.scala-tools</groupId>
@@ -135,7 +135,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.2.1</version>
-                <!-- 去掉dependency-reduced-pom.xml -->
+                <!-- delete dependency-reduced-pom.xml -->
                 <configuration>
                     <createDependencyReducedPom>false</createDependencyReducedPom>
                 </configuration>
@@ -146,11 +146,11 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <!--项目中,存在一个jar包,版本不同,还必须保留两种版本-->
-                            <!--举例:flink cep和cdc都需要guava,但一个需要18版本,一个需要30版本-->
-                            <!--这个表示会生成两个jar包，一个原始的，一个shade的-->
+                            <!--Among the items, there is only one jar package, different editions, the number must be reserved and different editions-->
+                            <!--Example: flink cep Japanese CDC city demand guava, but one demand 18 edition book, one demand 30 edition book-->
+                            <!--This display shows two jars, one primitive, one shade.-->
                             <shadedArtifactAttached>true</shadedArtifactAttached>
-                            <!--这个表示生成的shade的包 它的后缀名称是什么，通过这个后缀名称，在引用的时候的，就不会出现引用了shade包的情况了。 -->
+                            <!--This is the name of the shade package that was created after the display, but the name of the name is the same, the name of the name, the situation, the situation, the circumstances of the shade package. -->
                             <finalName>movie-recommend-jar-with-dependencies</finalName>
                             <filters>
                                 <filter>
